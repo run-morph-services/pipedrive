@@ -1,50 +1,35 @@
 import { Crm }  from '@run-morph/models';
 import { List, Resource, Metadata, Error }  from '@run-morph/sdk';
 
-// Define metadata for the HubSpot Contact model
+// Define metadata for the Pipedrive Contact model
 const metadata:Metadata<Crm.Contact> = {
 	model: Crm.Contact,
-	scopes: ['crm.objects.contacts.read']
+	scopes: ['contacts:read']
 };
 
 // Export a new List operation
 export default new List( async ( runtime, { page_size, cursor, sort, filter }) => { 
 
-	// Initialize the request body with default values
-	const body = {
-		sorts: [],
-		filterGroups:[],
-		limit: 50, // Default limit
-		properties: [
-			'email', 'firstname', 'lastname', 'website', 'company', 'phone', 'address', 'city', 'state', 'zip', 'country', 'hubspot_owner_id', 'createdate', 'closedate', 'lastmodifieddate', 'lifecyclestage'
-		],
-		after: cursor?.after || null
+    // Adjust the API endpoint based on the presence of a filter
+    const apiEndpoint = filter ? '/persons/search' : '/persons';
+
+
+	// Initialize the request params with default values for Pipedrive
+	const params = {
+		start: cursor?.next_start || 0,
+		limit: page_size || 50, // Default limit
+		sort: sort ? mapSort(sort) : '',
+		// Assuming Pipedrive API accepts a JSON object for filtering
+		filter: filter ? mapFilter(filter) : {}
 	}
 
-	// Adjust limit, sort, and filter based on input parameters
-	const hs_limit = page_size > 50 || page_size === null ? 50 : page_size;
-	const hs_sort = sort ? mapSort(sort) : null;
-	const hs_filter = filter ? mapFilter(filter) : null;
-
-	if(hs_limit){
-		body.limit = hs_limit;
-	}
-
-	if(hs_sort){
-		body.sorts.push(hs_sort)
-	}
-
-	if(hs_filter){
-		body.filterGroups.push({ filters: hs_filter })
-	}
-
-	// Call the HubSpot contact search API
+	// Call the Pipedrive contact search API
 	const response = await runtime.proxy({
-		method: 'POST',
-		path: '/crm/v3/objects/contacts/search',
-		body
+		method: 'GET', // Assuming GET for search, adjust if Pipedrive requires POST
+		path: apiEndpoint, // Adjusted to Pipedrive's search endpoint
+		params: params // Assuming query parameters, adjust if body is required
 	});
-
+	console.log(response)
 	// Handle errors from the API response
 	if(response.status === 'error'){
         switch (response.category){
@@ -54,8 +39,8 @@ export default new List( async ( runtime, { page_size, cursor, sort, filter }) =
     }
 
 	// Prepare the next cursor and map resources for the response
-	const next = response?.paging?.next || null;
-	const resources = response.results.map(mapResource);  
+	const next = response?.additional_data?.pagination || null;
+	const resources = response.data.map(mapResource);  
 
 	// Return the resources and the next cursor for pagination
 	return { 
@@ -66,55 +51,48 @@ export default new List( async ( runtime, { page_size, cursor, sort, filter }) =
 }, metadata );
 
 
-// Helper function to map HubSpot contacts to HubSpot Contact resources
-function mapResource(hs_contact){
+// Adjusted helper function to map Pipedrive contacts to resources
+function mapResource(pd_contact){
 	return new Resource({ 
-		id: hs_contact.id,
+		id: pd_contact.id,
 		data: {
-			first_name: hs_contact.properties.firstname,
-			last_name: hs_contact.properties.lastname,
-			email: hs_contact.properties.email,
-			phone: hs_contact.properties.phone
+			first_name: pd_contact.first_name,
+			last_name: pd_contact.last_name,
+			email: pd_contact.email[0].value, // Assuming email is an array
+			phone: pd_contact.phone[0].value // Assuming phone is an array
 		},
-			created_at: new Date(hs_contact.createdAt).toISOString(),
-			updated_at: new Date(hs_contact.updatedAt).toISOString()
+			created_at: pd_contact.add_time,
+			updated_at: pd_contact.update_time
 		}, Crm.Contact)
 }
 
-// Helper function to map sorting parameters
+// Helper function to map sorting parameters for Pipedrive
 function mapSort(sort) {
+    // Example mapping, adjust based on Pipedrive's actual sorting syntax
     switch (sort) {
         case List.Sort.CREATED_AT_ASC:
-            return 'createdate';
+            return 'add_time asc';
         case List.Sort.CREATED_AT_DESC:
-            return '-createdate';
+            return 'add_time desc';
         case List.Sort.UPDATED_AT_ASC:
-            return 'lastmodifieddate';
+            return 'update_time asc';
         case List.Sort.UPDATED_AT_DESC:
-            return '-lastmodifieddate';
+            return 'update_time desc';
         default:
-            return '-createdate';
+            return 'add_time desc'; // Default sorting
     }
 }
 
-// Helper function to map filtering parameters
+// Helper function to map filtering parameters for Pipedrive
 function mapFilter(filter) {
-    const filterMapping = {
-        first_name: 'firstname',
-        last_name: 'lastname',
-        email: 'email'
-    };
-
-    let hs_filters = [];
+    // This is a simplified example. You'll need to adjust it based on Pipedrive's filtering capabilities.
+    let pd_filters = {};
     for (let key in filter) {
-        if (filter.hasOwnProperty(key) && filterMapping[key]) {
-            hs_filters.push({
-                propertyName: filterMapping[key],
-                operator: 'EQ',
-                value: filter[key]
-            });
+        if (filter.hasOwnProperty(key)) {
+            // Assuming Pipedrive uses a simple key-value pair for filtering.
+            // Adjust the property names and structure according to Pipedrive's documentation.
+            pd_filters[key] = filter[key];
         }
     }
-
-    return hs_filters;
+    return pd_filters;
 }
