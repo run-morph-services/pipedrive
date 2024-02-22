@@ -1,0 +1,27 @@
+{
+  "id": "pipedrive",
+  "name": "Pipedrive",
+  "author": "HenriChabrand",
+  "version": "1.0.0",
+  "authentication": {
+    "type": "oauth2",
+    "authorize_url": "https://oauth.pipedrive.com/oauth/authorize",
+    "access_token_url": "https://oauth.pipedrive.com/oauth/token",
+    "configs": [],
+    "scopes":["base", "deals_read", "deals_write"]
+  },
+  "proxy": {
+    "base_url": "https://api.pipedrive.com/v1",
+    "headers": {
+     "Content-Type": "application/json"
+    }
+   },
+  "scripts": {
+    "build": "morph build",
+    "dev": "morph develop"
+  },
+  "dependencies": {
+    "@run-morph/sdk": "^1.0.15",
+    "@run-morph/models": "^1.0.2"
+  }
+}
