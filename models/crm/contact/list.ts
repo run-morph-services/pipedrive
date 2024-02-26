@@ -39,7 +39,7 @@ export default new List( async ( runtime, { page_size, cursor, sort, filter }) =
     }
 
 	// Prepare the next cursor and map resources for the response
-	const next = response?.additional_data?.pagination || null;
+	const next = response?.additional_data?.pagination?.more_items_in_collection ? response?.additional_data?.pagination : null;
 	const resources = response.data.map(mapResource);  
 
 	// Return the resources and the next cursor for pagination
