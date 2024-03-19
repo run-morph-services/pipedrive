@@ -8,7 +8,7 @@
     "authorize_url": "https://oauth.pipedrive.com/oauth/authorize",
     "access_token_url": "https://oauth.pipedrive.com/oauth/token",
     "configs": [],
-    "scopes":["base", "deals_read", "deals_write"]
+    "scopes":["base"]
   },
   "proxy": {
     "base_url": "https://api.pipedrive.com/v1",
@@ -22,6 +22,6 @@
   },
   "dependencies": {
     "@run-morph/sdk": "^1.0.15",
-    "@run-morph/models": "^1.0.2"
+    "@run-morph/models": "^1.0.5"
   }
 }

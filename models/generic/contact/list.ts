@@ -1,9 +1,9 @@
-import { Crm }  from '@run-morph/models';
+import { Generic }  from '@run-morph/models';
 import { List, Resource, Metadata, Error }  from '@run-morph/sdk';
 
 // Define metadata for the Pipedrive Contact model
-const metadata:Metadata<Crm.Contact> = {
-	model: Crm.Contact,
+const metadata:Metadata<Generic.Contact> = {
+	model: Generic.Contact,
 	scopes: ['contacts:read']
 };
 
@@ -25,9 +25,9 @@ export default new List( async ( runtime, { page_size, cursor, sort, filter }) =
 
 	// Call the Pipedrive contact search API
 	const response = await runtime.proxy({
-		method: 'GET', // Assuming GET for search, adjust if Pipedrive requires POST
-		path: apiEndpoint, // Adjusted to Pipedrive's search endpoint
-		params: params // Assuming query parameters, adjust if body is required
+		method: 'GET',
+		path: apiEndpoint, 
+		params: params
 	});
 	console.log(response)
 	// Handle errors from the API response
@@ -63,7 +63,7 @@ function mapResource(pd_contact){
 		},
 			created_at: pd_contact.add_time,
 			updated_at: pd_contact.update_time
-		}, Crm.Contact)
+		}, Generic.Contact)
 }
 
 // Helper function to map sorting parameters for Pipedrive
