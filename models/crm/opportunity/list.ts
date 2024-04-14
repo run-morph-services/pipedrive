@@ -74,10 +74,7 @@ async function mapResource(pd_deal, runtime){
     const companies = [];
     if(pd_deal?.org_id?.value){
         companies.push( new ResourceRef({ id: pd_deal?.org_id?.value}, Generic.Company));
-    }
-
-   
-   
+    }   
 
     return new Resource({ 
         id: pd_deal.id,
@@ -87,7 +84,7 @@ async function mapResource(pd_deal, runtime){
             amount: parseFloat(pd_deal.value),
             currency: pd_deal.currency,
             win_probability: pd_deal.probability, // Assuming 'probability' is provided by Pipedrive
-            status: new ResourceRef({ id: pd_deal.stage_id}, Crm.Stage),
+            stage: new ResourceRef({ id: pd_deal.stage_id}, Crm.Stage),
             pipeline: new ResourceRef({ id: pd_deal.pipeline_id}, Crm.Pipeline),
             closed_at: pd_deal.won_time || pd_deal.lost_time || null,
             contacts: contacts,

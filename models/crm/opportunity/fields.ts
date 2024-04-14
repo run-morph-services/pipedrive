@@ -26,7 +26,7 @@ const metadata: Metadata<Crm.Opportunity> = {
             remote_keys: [], // Check if Pipedrive provides this field
             operations: ['list', 'retrieve']
         },
-        status: {
+        stage: {
             remote_keys: ['status'], // Assuming 'status' for deal stage
             operations: ['list', 'retrieve', 'update']
         },

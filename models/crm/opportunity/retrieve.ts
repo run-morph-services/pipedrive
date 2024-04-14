@@ -53,12 +53,12 @@ async function mapResource(pd_deal){
             amount: parseFloat(pd_deal.value),
             currency: pd_deal.currency,
             win_probability: pd_deal.probability, // Assuming 'probability' is provided by Pipedrive
-            status: new ResourceRef({ id: pd_deal.stage_id}, Crm.Stage),
+            stage: new ResourceRef({ id: pd_deal.stage_id}, Crm.Stage),
             pipeline: new ResourceRef({ id: pd_deal.pipeline_id}, Crm.Pipeline),
             closed_at: pd_deal.won_time || pd_deal.lost_time || null,
             contacts: contacts,
             companies: companies,
-            owner: pd_deal.user_id?.id ? new ResourceRef({ id: pd_deal.user_id.id}, Generic.User) : null
+            owner: pd_deal.user_id?.id ? new ResourceRef({ id: pd_deal.user_id?.id}, Generic.User) : null
         },
         created_at: new Date(pd_deal.add_time).toISOString(),
         updated_at: new Date(pd_deal.update_time).toISOString(),
