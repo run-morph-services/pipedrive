@@ -61,8 +61,9 @@ function mapResource(pd_contact){
 			email: pd_contact.email[0].value, // Assuming email is an array
 			phone: pd_contact.phone[0].value // Assuming phone is an array
 		},
-			created_at: pd_contact.add_time,
-			updated_at: pd_contact.update_time
+		remote_data: pd_contact,
+		created_at: pd_contact.add_time,
+		updated_at: pd_contact.update_time
 		}, Generic.Contact)
 }
 

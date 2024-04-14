@@ -40,6 +40,7 @@ export default new List(async (runtime, { page_size, cursor, sort, filter }) => 
                 name: pd_pipeline.name,
                 stages: stages
             },
+            remote_data: pd_pipeline,
             created_at: pd_pipeline.add_time,
             updated_at: pd_pipeline.update_time
         }, Crm.Pipeline);
@@ -71,6 +72,7 @@ function mapStage(pd_stage) {
             name: pd_stage.name,
             type: stageType
         },
+        remote_data: pd_stage,
         created_at: pd_stage.add_time,
         updated_at: pd_stage.update_time
     }, Crm.Stage);

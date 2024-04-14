@@ -48,6 +48,7 @@ function mapResource(pd_stage) {
             name: pd_stage.name, 
             type: stageType 
         }, 
+        remote_data:pd_stage,
         created_at: pd_stage.add_time, 
         updated_at: pd_stage.update_time || pd_stage.add_time // Use add_time if update_time is null
     }, Crm.Stage);
