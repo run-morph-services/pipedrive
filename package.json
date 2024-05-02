@@ -7,6 +7,18 @@
     "type": "oauth2",
     "authorize_url": "https://oauth.pipedrive.com/oauth/authorize",
     "access_token_url": "https://oauth.pipedrive.com/oauth/token",
+    "revoke": {
+      "url": "https://oauth.pipedrive.com/oauth/revoke",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": "Basic ${base64(authentication.client_id+':'+authentication.client_secret)}"
+      },
+      "body": {
+        "token": "${authentication.tokens.refresh_token}",
+        "token_type_hint": "refresh_token"
+      }
+    },
     "configs": [],
     "scopes": [
       "base"
