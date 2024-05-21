@@ -15,6 +15,8 @@ export default new Retrieve( async (runtime, { }) => {
         path: `/users/me` // Endpoint to get the authenticated user's organization details
     });
 
+    console.log(response)
+
     // Check if the API call was successful
     if (!response.success) {
         throw new Error(Error.Type.UNKNOWN_ERROR, "Failed to retrieve organization details");
@@ -35,8 +37,8 @@ function mapResource(pd_user){
         data: {
             name: pd_user.company_name
         },
-        created_at: new Date(pd_user.created).toISOString(),
-        updated_at: new Date(pd_user.modified).toISOString(),
+        created_at: pd_user.created ? new Date(pd_user.created).toISOString() : null,
+        updated_at: pd_user.modified ? new Date(pd_user.modified).toISOString() : pd_user.created ? new Date(pd_user.created).toISOString() : null,
         remote_data: pd_user
     }, Generic.Workspace)
 }
